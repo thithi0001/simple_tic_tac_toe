@@ -96,6 +96,8 @@ function render() {
     firstPlayer.disabled = configDisabled;
     playerXName.disabled = configDisabled;
     playerOName.disabled = configDisabled;
+    clearConfigBtn.disabled = configDisabled;
+    clearHistoryBtn.disabled = state.history.length === 0;
 
     playerXLabel.textContent = `${state.playerXName} (X)`;
     playerOLabel.textContent = `${state.playerOName} (O)`;
