@@ -154,7 +154,7 @@ function checkGameResult() {
         });
 
         showResult(
-            "Có người chiến thắng!",
+            "Có người chơi chiến thắng!",
             `${winnerName} thắng với ký tự ${winner}.`
         );
 
