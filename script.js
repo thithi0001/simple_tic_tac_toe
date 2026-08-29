@@ -13,6 +13,7 @@ const historyBody = document.getElementById("historyBody");
 const emptyHistory = document.getElementById("emptyHistory");
 const playerXLabel = document.getElementById("playerXLabel");
 const playerOLabel = document.getElementById("playerOLabel");
+const nextTurn = document.getElementById("nextTurn");
 
 const resultModal = document.getElementById("resultModal");
 const resultTitle = document.getElementById("resultTitle");
@@ -75,8 +76,16 @@ function saveState() {
 
 function render() {
     cells.forEach((cell, index) => {
-        cell.textContent = state.board[index];
-        cell.disabled = Boolean(state.board[index]) || state.finished;
+        const value = state.board[index];
+
+        cell.textContent = value;
+        cell.classList.remove("x", "o");
+
+        if (value) {
+            cell.classList.add(value.toLowerCase());
+        }
+
+        cell.disabled = Boolean(value) || state.finished;
     });
 
     firstPlayer.value = state.firstPlayer;
@@ -91,10 +100,19 @@ function render() {
     playerXLabel.textContent = `${state.playerXName} (X)`;
     playerOLabel.textContent = `${state.playerOName} (O)`;
 
+    nextTurn.classList.remove("x", "o", "draw");
+
     if (!state.started) {
         turnInfo.textContent = `${state.firstPlayer} sẽ đi trước`;
+        nextTurn.textContent = state.firstPlayer;
+        nextTurn.classList.add(state.firstPlayer.toLowerCase());
     } else if (!state.finished) {
         turnInfo.textContent = `Lượt của ${getPlayerName(state.currentPlayer)} (${state.currentPlayer})`;
+        nextTurn.textContent = state.currentPlayer;
+        nextTurn.classList.add(state.currentPlayer.toLowerCase());
+    } else {
+        nextTurn.textContent = "—";
+        nextTurn.classList.add("draw");
     }
 
     renderHistory();
@@ -133,7 +151,6 @@ function checkGameResult() {
             result: winner
         });
 
-        state.history = state.history.slice(0, 10);
         showResult(
             "Có người chiến thắng!",
             `${winnerName} thắng với ký tự ${winner}.`
@@ -152,7 +169,6 @@ function checkGameResult() {
             result: "Hòa"
         });
 
-        state.history = state.history.slice(0, 10);
         showResult("Ván đấu hòa", "Không có người chiến thắng trong ván này.");
     }
 }
@@ -247,12 +263,18 @@ function renderHistory() {
     state.history.forEach(item => {
         const row = document.createElement("tr");
 
+        const resultClass = item.result === "X"
+            ? "result-x"
+            : item.result === "O"
+                ? "result-o"
+                : "result-draw";
+
         row.innerHTML = `
             <td>${item.matchNo}</td>
             <td>${formatDate(item.endedAt)}</td>
             <td>${escapeHtml(item.xName)}</td>
             <td>${escapeHtml(item.oName)}</td>
-            <td>${item.result}</td>
+            <td class="${resultClass}">${item.result}</td>
         `;
 
         historyBody.appendChild(row);
